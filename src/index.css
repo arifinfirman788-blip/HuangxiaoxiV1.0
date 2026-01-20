@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer utilities {
+  .glass {
+    @apply bg-glass-bg backdrop-blur-md border border-glass-border;
+  }
+}
