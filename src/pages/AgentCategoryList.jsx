@@ -70,7 +70,7 @@ const AgentCategoryList = () => {
       </header>
 
       {/* Top Half: Map Section */}
-      <div className="h-[45vh] w-full relative z-0">
+      <div className="h-[35%] w-full relative z-0">
          <MapContainer 
            center={[26.6, 106.6]} 
            zoom={7} 
@@ -112,7 +112,7 @@ const AgentCategoryList = () => {
       </div>
 
       {/* Bottom Half: List Panel */}
-      <div className="flex-1 bg-slate-50 -mt-6 rounded-t-[2rem] relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col border-t border-white/60">
+      <div className="flex-1 bg-slate-50 -mt-6 rounded-t-[2rem] relative z-10 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col border-t border-white/60 min-h-0">
         
         {/* Drag Handle Area */}
         <div className="w-full bg-slate-50 pt-3 pb-2 flex justify-center sticky top-0 z-20 shrink-0">

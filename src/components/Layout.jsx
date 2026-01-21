@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import BottomNav from './BottomNav';
 
-const Layout = () => {
+const Layout = ({ onAdoptTrip, isAuthenticated }) => {
   const location = useLocation();
   const showBottomNav = ['/', '/trip', '/shop', '/message', '/profile'].includes(location.pathname);
 
@@ -20,7 +20,7 @@ const Layout = () => {
       </div>
 
       {/* Bottom Navigation */}
-      {showBottomNav && <BottomNav />}
+      {showBottomNav && <BottomNav onAdoptTrip={onAdoptTrip} isAuthenticated={isAuthenticated} />}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, ShoppingBag, Star, ArrowRight, Sparkles, Clock, Tag } from 'lucide-react';
+import { getPlaceholder } from '../utils/imageUtils';
 
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState('全部');
@@ -10,7 +11,7 @@ const Shop = () => {
   const products = [
     {
       id: 1,
-      image: "https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: getPlaceholder(800, 800, 'Tea Gift'),
       title: "遵义红茶特级礼盒",
       subtitle: "来自湄潭的高原茶香",
       price: "299",
@@ -19,7 +20,7 @@ const Shop = () => {
     },
     {
       id: 2,
-      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: getPlaceholder(800, 800, 'Silver Jewelry'),
       title: "苗族银饰手工手镯",
       subtitle: "非遗传承人纯手工打造",
       price: "599",
@@ -28,7 +29,7 @@ const Shop = () => {
     },
     {
       id: 3,
-      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: getPlaceholder(800, 800, 'Hotel'),
       title: "贵阳大十字亚朵酒店",
       subtitle: "城市中心的静谧居所",
       price: "450",
@@ -37,7 +38,7 @@ const Shop = () => {
     },
     {
       id: 4,
-      image: "https://images.unsplash.com/photo-1555126634-323283e090fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: getPlaceholder(800, 800, 'Food'),
       title: "酸汤鱼双人套餐",
       subtitle: "地道凯里风味",
       price: "128",
@@ -68,7 +69,7 @@ const Shop = () => {
       <section className="px-6 pt-6 pb-8">
         <div className="relative w-full aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl mb-6 group cursor-pointer">
           <img 
-            src="https://images.unsplash.com/photo-1535189043414-47a3c49a0bed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+            src={getPlaceholder(1000, 1250, 'Summer Collection')}
             alt="Summer Collection" 
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
           />

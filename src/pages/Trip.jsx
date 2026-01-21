@@ -2,44 +2,27 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, ChevronRight, Users, Clock, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getPlaceholder } from '../utils/imageUtils';
 
-const Trip = () => {
+const Trip = ({ adoptedTrip }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
+  const myTrips = adoptedTrip ? [adoptedTrip] : [];
+
+  // Dynamically generate tabs based on trips
+  const uniqueDates = [...new Set(myTrips.map(trip => trip.date))];
   const tabs = [
     { id: 'all', label: '全部' },
-    { id: 'may', label: '5.1-5.3' },
-    { id: 'jun', label: '6.15-6.18' },
-    { id: 'aug', label: '8.10-8.15' },
-  ];
-
-  const myTrips = [
-    {
-      id: 1,
-      title: "梵净山：天空之城",
-      date: "5.1-5.3",
-      image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      days: 3,
-      distance: "5km",
-      rating: "9.8",
-      status: "upcoming"
-    },
-    {
-      id: 2,
-      title: "遵义红色之旅",
-      date: "6.15-6.18",
-      image: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      days: 4,
-      distance: "120km",
-      rating: "9.5",
-      status: "planned"
-    }
+    ...uniqueDates.map((date, index) => ({ id: `date-${index}`, label: date }))
   ];
 
   const filteredTrips = activeTab === 'all' 
     ? myTrips 
-    : myTrips.filter(t => activeTab === 'may' ? t.date === '5.1-5.3' : activeTab === 'jun' ? t.date === '6.15-6.18' : false);
+    : myTrips.filter(t => {
+        const selectedTab = tabs.find(tab => tab.id === activeTab);
+        return selectedTab && t.date === selectedTab.label;
+    });
 
   return (
     <div className="h-full w-full overflow-y-auto scrollbar-hide pb-24 px-6 pt-12">
@@ -55,18 +38,18 @@ const Trip = () => {
           country="中国·贵州"
           title="黄果树瀑布深度游"
           date="05/01 - 05/03"
-          users={['https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=60', 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&auto=format&fit=crop&q=60']}
+          users={[getPlaceholder(100, 100, 'U1'), getPlaceholder(100, 100, 'U2'), getPlaceholder(100, 100, 'U3')]}
           extraUsers={22}
-          bgImage="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+          bgImage={getPlaceholder(600, 300, 'Waterfall Trip')}
           icon="🌊"
         />
         <HorizontalTripCard 
           country="中国·贵州"
           title="西江千户苗寨"
           date="05/04 - 05/06"
-          users={['https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=60', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=60']}
+          users={[getPlaceholder(100, 100, 'U4'), getPlaceholder(100, 100, 'U5')]}
           extraUsers={15}
-          bgImage="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+          bgImage={getPlaceholder(600, 300, 'Miao Village')}
           icon="🏮"
         />
       </div>
@@ -100,7 +83,7 @@ const Trip = () => {
           {filteredTrips.length === 0 && (
             <div className="text-center py-10 text-slate-400 bg-slate-50 rounded-3xl border border-slate-100">
               <Calendar size={48} className="mx-auto mb-2 opacity-20" />
-              <p className="text-sm">该时段暂无行程</p>
+              <p className="text-sm">暂无行程，快去规划你的第一次旅行吧</p>
             </div>
           )}
         </div>
@@ -153,17 +136,21 @@ const HorizontalTripCard = ({ country, title, date, users, extraUsers, bgImage, 
   </div>
 );
 
-const TripCard = ({ trip }) => (
+const TripCard = ({ trip }) => {
+  const navigate = useNavigate();
+  return (
   <motion.div 
     layout
     initial={{ y: 20, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     exit={{ y: -20, opacity: 0 }}
+    onClick={() => navigate(`/trip/${trip.id}`)}
     className="w-full h-[320px] rounded-[2rem] relative overflow-hidden group cursor-pointer shadow-sm"
   >
     <img 
       src={trip.image} 
       alt={trip.title} 
+      crossOrigin="anonymous"
       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
     />
     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
@@ -198,6 +185,6 @@ const TripCard = ({ trip }) => (
       </div>
     </div>
   </motion.div>
-);
+)};
 
 export default Trip;

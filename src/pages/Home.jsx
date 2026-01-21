@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, User, ChevronDown, MessageCircle, Star, Coffee, Building, Landmark, Mic, Plus, Home as HomeIcon, Compass, UserCircle, X, Check, Bell, Languages, Volume2 } from 'lucide-react';
+import { Search, MapPin, User, ChevronDown, MessageCircle, Star, Coffee, Building, Landmark, Mic, Plus, Home as HomeIcon, Compass, UserCircle, X, Check, Bell, Languages, Volume2, ArrowUpRight, Plane, Clock, Sparkles, Camera, Car } from 'lucide-react';
 import { categories } from '../data/agents';
 import TuoSaiImage from '../image/托腮_1.png';
 
@@ -11,6 +11,14 @@ const iconMap = {
   Coffee: Coffee,
   User: User,
   Home: HomeIcon
+};
+
+const getAiReminder = (node) => {
+  if (!node) return "今天天气不错，适合出去走走，记得带上好心情哦～";
+  if (node.type === 'flight') return "航班出行请记得携带身份证，提前2小时到达机场安检～";
+  if (node.type === 'hotel') return "抵达酒店后可以先休息一下，缓解旅途疲劳再出发～";
+  if (node.type === 'food') return "当地美食虽好，也要注意饮食卫生，不要贪吃哦～";
+  return "旅途中遇到美景记得拍照留念，记录下这美好的瞬间～";
 };
 
 const phrases = [
@@ -120,10 +128,19 @@ const NewsMarquee = () => {
   );
 };
 
-const Home = () => {
+const Home = ({ adoptedTrip, isAuthenticated }) => {
   const [activeRole, setActiveRole] = useState('黄小西');
   const [showRoleSelector, setShowRoleSelector] = useState(false);
   const navigate = useNavigate();
+
+  // Navigation wrapper to check auth
+  const handleNav = (path) => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: { pathname: path } } });
+    } else {
+      navigate(path);
+    }
+  };
 
   const roles = ['黄小西', '酒店助手', '景区向导', '美食专家', '政务助手'];
 
@@ -141,7 +158,7 @@ const Home = () => {
                  <Languages size={20} />
               </button>
               <button 
-                onClick={() => navigate('/message')}
+                onClick={() => handleNav('/message')}
                 className="w-10 h-10 bg-white rounded-blob-2 shadow-sm border border-white/60 flex items-center justify-center overflow-hidden active:scale-95 transition-transform"
               >
                 <MessageCircle size={20} className="text-slate-700" />
@@ -153,15 +170,142 @@ const Home = () => {
           {/* News Marquee */}
           <NewsMarquee />
 
+          {/* Smart Notification Area (New) */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => adoptedTrip && handleNav(`/trip/${adoptedTrip.id}`)}
+            className="w-full bg-white/80 backdrop-blur-xl rounded-[1.5rem] p-5 -mt-8 mb-8 border border-white shadow-lg shadow-slate-200/50 min-h-[100px] flex flex-col justify-center relative overflow-hidden group cursor-pointer active:scale-98 transition-all"
+          >
+            {/* Decorative gradient blob */}
+            <div className="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-cyan-100/50 to-blue-100/50 blur-2xl rounded-full opacity-60 pointer-events-none" />
+
+            {adoptedTrip ? (() => {
+               // Flatten all timeline nodes from all days
+               const allNodes = adoptedTrip.itinerary?.flatMap(day => day.timeline) || [];
+               // Find next upcoming node
+               const nextNode = allNodes.find(n => n.status === 'upcoming' || n.status === 'planned') || allNodes[0];
+               
+               return (
+                 <>
+                   <div className="relative z-10 w-full flex items-center gap-4">
+                     {/* Left: Time/Icon */}
+                     <div className="flex flex-col items-center justify-center w-14 h-14 bg-cyan-50 rounded-xl shrink-0 text-cyan-600 border border-cyan-100 shadow-sm">
+                        {nextNode?.type === 'flight' ? <Plane size={24} /> : <Clock size={24} />}
+                        <span className="text-[10px] font-bold mt-0.5">{nextNode?.time}</span>
+                     </div>
+
+                     {/* Right: Info */}
+                     <div className="flex-1">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="text-xs font-bold text-cyan-600 bg-cyan-50/80 px-2 py-0.5 rounded-full border border-cyan-100/50 shadow-sm">
+                            {nextNode?.status === 'upcoming' ? '进行中' : '即将开始'}
+                          </span>
+                          <ChevronDown size={14} className="-rotate-90 text-slate-300" />
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-800 mb-0.5">{nextNode?.title}</h3>
+                        <p className="text-[10px] text-slate-500 line-clamp-1">
+                          {nextNode?.type === 'flight' 
+                            ? `${nextNode.details.flightNo} ${nextNode.details.status} · 预计${nextNode.details.arrTime}抵达`
+                            : nextNode?.details?.name || '点击查看详情'}
+                        </p>
+                     </div>
+                   </div>
+
+                   {/* AI Warm Reminder */}
+                   <div className="relative z-10 mt-4 pt-3 border-t border-slate-100 flex items-start gap-2.5">
+                     <div className="bg-gradient-to-r from-orange-400 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1 shadow-sm">
+                        <Sparkles size={10} /> 
+                        AI提醒
+                     </div>
+                     <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
+                       {getAiReminder(nextNode)}
+                     </p>
+                   </div>
+                 </>
+               );
+            })() : (
+              <div className="relative z-10 w-full">
+                <div className="flex justify-between items-center mb-3 px-1">
+                   <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                     <Sparkles size={14} className="text-cyan-500" />
+                     为你推荐
+                   </h3>
+                   <span className="text-[10px] text-slate-400">基于您的偏好</span>
+                </div>
+                
+                {/* Proactive Service Cards - Horizontal Scroll */}
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-5 px-5 pb-2">
+                   {[
+                     { 
+                       title: "黄果树专属导游", 
+                       desc: "带你避开人流，打卡最佳机位", 
+                       tag: "景区服务", 
+                       color: "text-purple-600", 
+                       bg: "bg-purple-50",
+                       icon: Camera
+                     },
+                     { 
+                       title: "凯宾斯基·管家", 
+                       desc: "今晚入住立享行政酒廊礼遇", 
+                       tag: "酒店特惠", 
+                       color: "text-indigo-600", 
+                       bg: "bg-indigo-50",
+                       icon: Building
+                     },
+                     { 
+                       title: "出行调度中心", 
+                       desc: "贵阳龙洞堡机场接机服务", 
+                       tag: "出行无忧", 
+                       color: "text-green-600", 
+                       bg: "bg-green-50",
+                       icon: Car
+                     }
+                   ].map((item, i) => {
+                     const ItemIcon = item.icon;
+                     return (
+                       <motion.div
+                         key={i}
+                         initial={{ opacity: 0, x: 20 }}
+                         animate={{ opacity: 1, x: 0 }}
+                         transition={{ delay: i * 0.1 }}
+                         onClick={() => handleNav('/chat-planning')}
+                         className="min-w-[200px] bg-white rounded-xl p-3 border border-slate-100 shadow-sm active:scale-95 transition-transform cursor-pointer"
+                       >
+                          <div className="flex items-start justify-between mb-2">
+                             <div className={`w-8 h-8 rounded-full ${item.bg} flex items-center justify-center`}>
+                                <ItemIcon size={14} className={item.color} />
+                             </div>
+                             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${item.bg} ${item.color}`}>
+                               {item.tag}
+                             </span>
+                          </div>
+                          <h4 className="text-xs font-bold text-slate-800 mb-1">{item.title}</h4>
+                          <p className="text-[10px] text-slate-400 leading-tight">{item.desc}</p>
+                          <button className="mt-3 w-full py-1.5 rounded-lg bg-slate-900 text-white text-[10px] font-bold">
+                             立即查看
+                          </button>
+                       </motion.div>
+                     );
+                   })}
+                </div>
+              </div>
+            )}
+          </motion.div>
+
           {/* Typewriter Effect */}
           <div className="mb-8">
 
           {/* Hero / Chat Section */}
-          <section className="mb-10">
+          <section className="mb-10 mt-12">
             <div className="relative">
               {/* Character Image - Positioned behind content, slightly lower to be covered by container */}
-              <div className="absolute -top-12 -right-4 w-32 h-32 pointer-events-none z-0">
-                 <img src={TuoSaiImage} alt="Character" className="w-full h-full object-contain" />
+              <div className="absolute -top-16 -right-6 w-40 h-40 pointer-events-none z-0">
+                 <img 
+                   src={TuoSaiImage} 
+                   alt="Character" 
+                   className="w-full h-full object-contain drop-shadow-lg"
+                 />
               </div>
 
               <motion.div 
@@ -184,6 +328,7 @@ const Home = () => {
                         <motion.button 
                           key={index}
                           whileTap={{ scale: 0.95 }}
+                          onClick={() => handleNav('/chat-planning')}
                           className="flex items-center gap-1.5 px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-slate-100 text-slate-600 whitespace-nowrap"
                         >
                           <agent.icon size={14} className="text-cyan-500" />
@@ -195,27 +340,19 @@ const Home = () => {
   
                   {/* Integrated Chat Input Area */}
                   <div className="w-full relative">
-                    <div className="bg-white rounded-[2rem] p-1.5 pr-1.5 shadow-lg flex items-center gap-2 border border-slate-100">
-                      {/* Switch Role Button (Inside Input) */}
-                      <div 
-                        className="pl-2 pr-2 py-1.5 bg-slate-100 rounded-full flex items-center gap-1 cursor-pointer hover:bg-slate-200 transition-colors shrink-0"
-                        onClick={() => setShowRoleSelector(true)}
-                      >
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center text-[10px] text-white font-bold">
-                          {activeRole[0]}
-                        </div>
-                        <ChevronDown size={12} className="text-slate-500" />
-                      </div>
-  
+                    <div className="bg-white rounded-[2rem] p-3 pr-4 shadow-lg flex items-center gap-2 border border-slate-100 cursor-pointer hover:shadow-xl transition-shadow"
+                         onClick={() => handleNav('/chat-planning')}
+                    >
                       <input 
                         type="text" 
-                        placeholder="向 @智能体 提问..." 
-                        className="bg-transparent outline-none w-full text-slate-700 placeholder-slate-400 text-xs py-2"
+                        placeholder="请输入您感兴趣的主题..." 
+                        className="bg-transparent outline-none w-full text-slate-700 placeholder-slate-400 text-sm pl-2 cursor-pointer"
+                        readOnly
                       />
                       
-                      <button className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center shrink-0 hover:scale-105 transition-transform shadow-md">
-                        <Mic size={16} />
-                      </button>
+                      <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center shrink-0">
+                        <ArrowUpRight size={18} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -223,23 +360,8 @@ const Home = () => {
             </div>
           </section>
 
-          {/* Entity Agents Categories (Masonry Style with Images) */}
-          <section className="mb-24">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 px-1">服务智能体广场</h3>
-            <div className="columns-2 gap-3 space-y-3">
-              {Object.values(categories).map((cat, index) => (
-                <AgentCategoryCard 
-                  key={cat.id}
-                  title={cat.name} 
-                  subtitle={cat.description}
-                  icon={iconMap[cat.icon]} 
-                  image={cat.image}
-                  index={index}
-                  onClick={() => navigate(`/category/${cat.id}`)}
-                />
-              ))}
-            </div>
-          </section>
+          {/* Entity Agents Categories (Masonry Style with Images) - REMOVED per request */}
+          {/* <section className="mb-24"> ... </section> */}
           </div>
         </div>
       </div>

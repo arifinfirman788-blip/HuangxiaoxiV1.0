@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getPlaceholder } from '../utils/imageUtils';
 
 const News = () => {
   const navigate = useNavigate();
@@ -13,21 +14,21 @@ const News = () => {
       id: 1,
       title: '贵州文旅优惠季开启，百家景区半价游',
       summary: '为促进冬季旅游消费，贵州省文化和旅游厅宣布启动“冬游贵州”优惠活动，全省100多家A级景区门票半价...',
-      image: 'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: getPlaceholder(800, 400, 'News 1'),
       time: '2026-01-21'
     },
     {
       id: 2,
       title: '黄果树瀑布迎来最佳观赏期',
       summary: '近期降雨充沛，黄果树瀑布水量大增，气势磅礴，吸引了大量游客前往观赏。建议游客错峰出行...',
-      image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: getPlaceholder(800, 400, 'Waterfall'),
       time: '2026-01-20'
     },
     {
       id: 3,
       title: '苗年非遗体验活动火热进行中',
       summary: '在雷山县西江千户苗寨，一年一度的苗年庆祝活动正在如火如荼地进行，游客可亲身体验苗族非遗文化...',
-      image: 'https://images.unsplash.com/photo-1540206395-688085723adb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: getPlaceholder(800, 400, 'Culture'),
       time: '2026-01-19'
     }
   ];

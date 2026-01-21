@@ -1,38 +1,40 @@
+import { getPlaceholder } from '../utils/imageUtils';
+
 export const categories = {
   scenic: {
     id: 'scenic',
     name: '景区智能体',
     icon: 'Landmark',
     description: '山水风光，智慧导览',
-    image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Travel/Scenic
+    image: getPlaceholder(800, 800, 'Scenic Agent'), // Travel/Scenic
   },
   hotel: {
     id: 'hotel',
     name: '酒店智能体',
     icon: 'Building',
     description: '舒适住宿，贴心服务',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Hotel
+    image: getPlaceholder(800, 800, 'Hotel Agent'), // Hotel
   },
   dining: {
     id: 'dining',
     name: '餐饮智能体',
     icon: 'Coffee',
     description: '地道美食，寻味贵州',
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Food
+    image: getPlaceholder(800, 800, 'Dining Agent'), // Food
   },
   gov: {
     id: 'gov',
     name: '政府智能体',
     icon: 'User',
     description: '便民服务，即刻响应',
-    image: 'https://images.unsplash.com/photo-1555848962-6e79363ec58f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Modern Building/Service
+    image: getPlaceholder(800, 800, 'Gov Agent'), // Modern Building/Service
   },
   living: {
     id: 'living',
     name: '旅居智能体',
     icon: 'Home',
     description: '诗意栖居，深度体验',
-    image: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Cabin/Living
+    image: getPlaceholder(800, 800, 'Living Agent'), // Cabin/Living
   }
 };
 

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Settings, 
@@ -13,12 +14,13 @@ import {
   CreditCard, 
   FileText, 
   Phone,
-  Edit2
+  Edit2,
+  LogOut
 } from 'lucide-react';
-import avatarImage from '../image/托腮_1.png'; // Assuming this image exists based on previous LS
+import avatarImage from '../image/托腮_1.png';
 
-const Profile = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const Profile = ({ isAuthenticated, onLogout }) => {
+  const navigate = useNavigate();
 
   // Mock user data
   const userData = {
@@ -36,7 +38,7 @@ const Profile = () => {
            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-cyan-100/50 to-transparent rounded-bl-[4rem] -z-0" />
            
            <div className="relative z-10">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <div className="flex items-center gap-5">
                 <div className="relative">
                   <div className="w-20 h-20 rounded-full border-2 border-white shadow-md overflow-hidden">
@@ -71,7 +73,7 @@ const Profile = () => {
                   <h2 className="text-xl font-bold text-slate-800 mb-1">欢迎来到智游黔境</h2>
                   <p className="text-xs text-slate-400 mb-3">登录开启您的专属智能旅程</p>
                   <button 
-                    onClick={() => setIsLoggedIn(true)}
+                    onClick={() => navigate('/login')}
                     className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-bold rounded-full shadow-md active:scale-95 transition-transform"
                   >
                     立即登录
@@ -104,6 +106,17 @@ const Profile = () => {
         <MenuItem icon={FileText} label="协议规则" />
         <MenuItem icon={Phone} label="客服电话" />
         <MenuItem icon={Settings} label="设置" isLast />
+        
+        {isAuthenticated && (
+          <motion.button 
+            whileTap={{ scale: 0.98 }}
+            onClick={onLogout}
+            className="w-full flex items-center justify-center gap-2 p-4 bg-red-50 text-red-500 rounded-2xl border border-red-100 shadow-sm mt-6 font-bold text-sm"
+          >
+            <LogOut size={18} />
+            退出登录
+          </motion.button>
+        )}
       </div>
 
       {/* Footer Info */}
