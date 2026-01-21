@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, User, ChevronDown, MessageCircle, Star, Coffee, Building, Landmark, Mic, Plus, Home as HomeIcon, Compass, UserCircle, X, Check, Bell, Languages } from 'lucide-react';
+import { Search, MapPin, User, ChevronDown, MessageCircle, Star, Coffee, Building, Landmark, Mic, Plus, Home as HomeIcon, Compass, UserCircle, X, Check, Bell, Languages, Volume2 } from 'lucide-react';
 import { categories } from '../data/agents';
 import TuoSaiImage from '../image/托腮_1.png';
 
@@ -72,6 +72,54 @@ const TypewriterText = () => {
   );
 };
 
+const NewsMarquee = () => {
+  const navigate = useNavigate();
+  const news = [
+    "贵州文旅优惠季开启，百家景区半价游",
+    "黄果树瀑布迎来最佳观赏期，水量充沛",
+    "遵义市发布低温凝冻黄色预警，请注意防范"
+  ];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % news.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <button 
+      onClick={() => navigate('/news')}
+      className="w-full bg-white/60 backdrop-blur-sm rounded-xl p-2 flex items-center gap-2 shadow-sm border border-white/60 mb-12 active:scale-98 transition-transform"
+    >
+      <div className="bg-orange-100 p-1 rounded-md">
+        <Volume2 size={14} className="text-orange-500" />
+      </div>
+      <div className="flex-1 h-4 relative overflow-hidden">
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={index}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 flex items-center"
+          >
+            <span className="text-xs text-slate-700 truncate font-medium">
+              {news[index]}
+            </span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      <div className="text-[10px] text-slate-400 flex items-center gap-0.5">
+        更多
+        <ChevronDown size={10} className="-rotate-90" />
+      </div>
+    </button>
+  );
+};
+
 const Home = () => {
   const [activeRole, setActiveRole] = useState('黄小西');
   const [showRoleSelector, setShowRoleSelector] = useState(false);
@@ -84,7 +132,7 @@ const Home = () => {
       <div className="h-full w-full overflow-y-auto scrollbar-hide pb-24">
         <div className="px-6 pt-12 relative z-10">
           {/* Header */}
-          <header className="flex justify-between items-center mb-8">
+          <header className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">你好, <br/>旅行者</h1>
             </div>
@@ -92,11 +140,21 @@ const Home = () => {
               <button className="w-10 h-10 bg-white rounded-blob-2 shadow-sm border border-white/60 flex items-center justify-center text-slate-500 hover:text-cyan-600 transition-colors">
                  <Languages size={20} />
               </button>
-              <div className="w-10 h-10 bg-white rounded-blob-2 shadow-sm border border-white/60 flex items-center justify-center overflow-hidden">
+              <button 
+                onClick={() => navigate('/message')}
+                className="w-10 h-10 bg-white rounded-blob-2 shadow-sm border border-white/60 flex items-center justify-center overflow-hidden active:scale-95 transition-transform"
+              >
                 <MessageCircle size={20} className="text-slate-700" />
-              </div>
+                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white" />
+              </button>
             </div>
           </header>
+
+          {/* News Marquee */}
+          <NewsMarquee />
+
+          {/* Typewriter Effect */}
+          <div className="mb-8">
 
           {/* Hero / Chat Section */}
           <section className="mb-10">
@@ -182,6 +240,7 @@ const Home = () => {
               ))}
             </div>
           </section>
+          </div>
         </div>
       </div>
 
