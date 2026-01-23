@@ -200,9 +200,9 @@ const Home = ({ adoptedTrip, isAuthenticated }) => {
                   <div className="w-full overflow-x-auto scrollbar-hide mb-3 -mx-2 px-2">
                     <div className="flex gap-2 min-w-max">
                       {[
-                        { name: '行程规划', icon: MapPin },
+                        { name: '旅行记录', icon: MapPin },
                         { name: '帮我写游记', icon: HomeIcon },
-                        { name: 'AI伴游', icon: User },
+                        { name: '旅居设计', icon: User },
                       ].map((agent, index) => (
                         <motion.button 
                           key={index}
