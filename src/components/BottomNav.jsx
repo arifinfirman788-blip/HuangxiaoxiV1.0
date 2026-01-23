@@ -13,13 +13,13 @@ const BottomNav = ({ onAdoptTrip, isAuthenticated, hasTrip }) => {
 
   const isActive = (path) => location.pathname === path;
 
-  // Guide Logic
-  useEffect(() => {
-     if (location.pathname === '/trip' && !hasTrip && guideStep === 0) {
-        // Trigger guide when on trip page with no trip
-        setGuideStep(1);
-     }
-  }, [location.pathname, hasTrip, guideStep]);
+  // Guide Logic (Disabled for now)
+  // useEffect(() => {
+  //    if (location.pathname === '/trip' && !hasTrip && guideStep === 0) {
+  //       // Trigger guide when on trip page with no trip
+  //       setGuideStep(1);
+  //    }
+  // }, [location.pathname, hasTrip, guideStep]);
 
   // Auth check helper
   const handleNav = (path) => {

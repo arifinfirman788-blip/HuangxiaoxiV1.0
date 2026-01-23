@@ -384,7 +384,7 @@ const TripDetail = ({ adoptedTrip }) => {
                         {/* Node Content */}
                         <div className="ml-6">
                           {(() => {
-                            const agent = getAgentInfo(node.type);
+                            const agent = getAgentInfo(node.type, node.agentId);
                             const services = getServices(node.type);
                             
                             return (
@@ -394,13 +394,27 @@ const TripDetail = ({ adoptedTrip }) => {
                               >
                                  {/* Header: Agent Info */}
                                  <div className={`${agent.headerBg} p-3 flex justify-between items-center border-b ${agent.border}`}>
-                                    <div className="flex items-center gap-1.5">
-                                      <div className={`w-5 h-5 rounded-full ${agent.bgColor} flex items-center justify-center`}>
-                                        <agent.icon size={12} className={agent.iconColor} />
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-8 h-8 rounded-full ${agent.bgColor} flex items-center justify-center overflow-hidden border border-white shadow-sm`}>
+                                        {agent.avatar ? (
+                                            <span className="text-lg">{agent.avatar}</span>
+                                        ) : (
+                                            <agent.icon size={16} className={agent.iconColor} />
+                                        )}
                                       </div>
-                                      <span className={`text-xs font-bold ${agent.color}`}>{agent.name}</span>
+                                      <div>
+                                        <p className={`text-xs font-bold ${agent.color}`}>{agent.name}</p>
+                                        <div className="flex items-center gap-1">
+                                            <span className={`w-1.5 h-1.5 rounded-full ${node.status === 'ongoing' ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                                            <p className="text-[10px] text-slate-400 font-medium">
+                                                {node.status === 'ongoing' ? '服务中' : '在线'}
+                                            </p>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <span className={`text-[10px] font-bold ${agent.iconColor}`}>{agent.tag}</span>
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-full bg-white border ${agent.border} ${agent.color} font-bold`}>
+                                      {agent.tag}
+                                    </span>
                                  </div>
 
                                  {/* Body: Key Info */}

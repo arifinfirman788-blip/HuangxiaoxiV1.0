@@ -3,12 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, ChevronRight, Users, Clock, ArrowUpRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getPlaceholder } from '../utils/imageUtils';
+import { mockTrips } from '../data/mockTrips';
 
 const Trip = ({ adoptedTrip }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
 
-  const myTrips = adoptedTrip ? [adoptedTrip] : [];
+  // Merge adopted trip with mock trips for demo purposes
+  // Avoid duplicates if adoptedTrip has same id as mockTrip
+  const myTrips = [...mockTrips];
+  if (adoptedTrip && !myTrips.find(t => t.id === adoptedTrip.id)) {
+      myTrips.unshift(adoptedTrip);
+  }
 
   // Dynamically generate tabs based on trips
   const uniqueDates = [...new Set(myTrips.map(trip => trip.date))];

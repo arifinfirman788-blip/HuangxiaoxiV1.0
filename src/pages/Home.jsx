@@ -1,9 +1,90 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, User, ChevronDown, MessageCircle, Star, Coffee, Building, Landmark, Mic, Plus, Home as HomeIcon, Compass, UserCircle, X, Check, Bell, Languages, Volume2, ArrowUpRight, Plane, Clock, Sparkles, Camera, Car } from 'lucide-react';
+import { Search, MapPin, User, ChevronDown, ChevronRight, MessageCircle, Star, Coffee, Building, Landmark, Mic, Plus, Home as HomeIcon, Compass, UserCircle, X, Check, Bell, Languages, Volume2, ArrowUpRight, Plane, Clock, Sparkles, Camera, Car } from 'lucide-react';
 import { categories } from '../data/agents';
+import { mockTrips } from '../data/mockTrips';
 import TuoSaiImage from '../image/托腮_1.png';
+
+const TripReminderCard = () => {
+  const navigate = useNavigate();
+  // Find ongoing node
+  // Simplified logic for demo: just pick the first trip's ongoing node
+  const trip = mockTrips[0];
+  let activeNode = null;
+  
+  if (trip) {
+      trip.itinerary.forEach(day => {
+          day.timeline.forEach(node => {
+              if (node.status === 'ongoing') activeNode = node;
+          })
+      })
+  }
+
+  if (!activeNode) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5 }}
+      className="mt-6 mb-2"
+    >
+      <div 
+        onClick={() => navigate(`/trip/${trip.id}`)}
+        className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden active:scale-98 transition-transform"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-start mb-3">
+           <div className="flex items-center gap-2">
+              <span className="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm">
+                 <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"/>
+                 进行中
+              </span>
+              <h3 className="font-bold text-slate-800 text-sm">{activeNode.title}</h3>
+           </div>
+           <ChevronRight size={16} className="text-slate-400" />
+        </div>
+
+        {/* Content */}
+        <div className="flex gap-4 mb-3">
+            <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0 text-2xl shadow-inner">
+                {activeNode.type === 'hotel' ? '🛏️' : '📍'}
+            </div>
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 text-xs text-slate-600 mb-1.5">
+                    {activeNode.details.checkIn && (
+                        <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded border border-slate-100">
+                            <Clock size={10} className="text-indigo-500" />
+                            <span>{activeNode.details.checkIn}入住</span>
+                        </div>
+                    )}
+                    <span className="truncate font-medium">{activeNode.details.roomType}</span>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                    {activeNode.details.facilities && activeNode.details.facilities.slice(0, 3).map((f, i) => (
+                        <span key={i} className="text-[10px] bg-white border border-slate-100 px-1.5 py-0.5 rounded text-slate-500">
+                            {f}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </div>
+
+        {/* AI Tips */}
+        <div className="bg-white/60 rounded-xl p-2.5 flex gap-2 items-start text-xs border border-indigo-50/50">
+            <div className="w-5 h-5 rounded-full bg-cyan-100 flex items-center justify-center shrink-0 mt-0.5">
+                <Sparkles size={10} className="text-cyan-600" />
+            </div>
+            <p className="text-slate-600 leading-relaxed">
+                <span className="font-bold text-indigo-900 mr-1">黄小西:</span>
+                {activeNode.tips}
+            </p>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
 
 const iconMap = {
   Landmark: Landmark,
@@ -176,7 +257,7 @@ const Home = ({ adoptedTrip, isAuthenticated }) => {
           <div className="mb-8">
 
           {/* Hero / Chat Section */}
-          <section className="mb-8 mt-24">
+          <section className="mb-6 mt-8">
             <div className="relative">
               {/* Character Image - Positioned behind content, slightly lower to be covered by container */}
               <div className="absolute -top-16 -right-6 w-40 h-40 pointer-events-none z-0">
@@ -200,8 +281,8 @@ const Home = ({ adoptedTrip, isAuthenticated }) => {
                   <div className="w-full overflow-x-auto scrollbar-hide mb-3 -mx-2 px-2">
                     <div className="flex gap-2 min-w-max">
                       {[
-                        { name: '旅行记录', icon: MapPin },
-                        { name: '帮我写游记', icon: HomeIcon },
+                        { name: '旅行规划', icon: MapPin },
+                        { name: '旅行记录', icon: HomeIcon },
                         { name: '旅居设计', icon: User },
                       ].map((agent, index) => (
                         <motion.button 
@@ -237,6 +318,11 @@ const Home = ({ adoptedTrip, isAuthenticated }) => {
                 </div>
               </motion.div>
             </div>
+          </section>
+
+          {/* Trip Reminder Card - Moved Outside Hero */}
+          <section className="mb-24">
+             <TripReminderCard />
           </section>
 
           {/* Entity Agents Categories (Masonry Style with Images) - REMOVED per request */}
